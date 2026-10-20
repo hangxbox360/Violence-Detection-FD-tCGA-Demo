@@ -1,0 +1,10 @@
+start_s,end_s,label,clip
+0.00,5.00,normal,NV_229.mp4
+5.00,10.00,normal,NV_330.mp4
+10.00,14.30,fight,V_447.mp4
+14.30,19.40,normal,NV_346.mp4
+19.40,23.50,fight,V_516.mp4
+23.50,27.50,fight,V_521.mp4
+27.50,32.17,normal,NV_743.mp4
+32.17,37.17,fight,V_389.mp4
+37.17,42.17,normal,NV_490.mp4

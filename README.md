@@ -287,15 +287,16 @@ Conditions: camera ego-motion (lowest / highest tercile of the clip's global-mot
 
 ## 4. Real-time demo (video file / webcam / RTSP)
 
-The real-time demo runs FD-tCGA on a stream and raises a smoothed alarm.
+The real-time demo runs FD-tCGA on a stream **on the CPU only** and raises a smoothed alarm.
 
-<p align="center"><img src="realtime/realtime_fdtcga_surv.gif" width="480" alt="real-time demo"></p>
+<p align="center"><img src="realtime/realtime_fdtcga_rlvs_cpu.gif" width="640" alt="real-time demo"></p>
 
-- Alarm with hysteresis: ON when at least 3 of the last 5 predictions (every 0.5 s) are ≥ 0.6; OFF when all of the last 5 are < 0.4.
-- Overlay: state, P(violence), latency and a 30 s probability trace; red border while the alarm is on.
-- Logs: every prediction (`windows.csv`) and every alarm (`events.csv`).
+- Every 0.5 s the last 5 s of frames are re-sampled to 16 frames (+1 for the frame difference) and scored.
+- Alarm with hysteresis: ON when at least 3 of the last 5 predictions are ≥ 0.6; OFF when all of the last 5 are < 0.4.
+- Display: video (red border while the alarm is on) | side panel with the state, P(violence), the latency per prediction and the **frame difference the model receives** | timeline of the whole stream: ground truth (red = fight), alarms and P(violence) with the ON / OFF thresholds.
+- Logs: every prediction (`demo_rlvs_fdtcga_windows.csv`), every alarm (`demo_rlvs_fdtcga_events.csv`) and the clip list with its ground truth (`demo_rlvs_ground_truth.csv`).
 
-**Example run** ([`realtime/realtime_fdtcga_surv.mp4`](realtime/realtime_fdtcga_surv.mp4)): a 22 s stream of 11 SURV test clips of cross-validation fold 0 joined back to back (non-violent / 2 fights / non-violent / 2 fights / non-violent), fold-0 weights, RTX 5060 Ti. Alarms: 5.7–12.4 s (peak 0.78).
+**Example run** ([`realtime/realtime_fdtcga_rlvs_cpu.mp4`](realtime/realtime_fdtcga_rlvs_cpu.mp4)): a 42 s stream of 9 RLVS test clips (4 fights) joined back to back, drawn by a fixed random rule (none was seen in training or checkpoint selection), seed-42 weights, CPU only (4 threads), median 227 ms per prediction. Alarms: 11.0–17.0 s (peak 0.96); 21.0–30.5 s (peak 0.96); 34.0–41.5 s (peak 0.95). Clips of other aspect ratios look stretched in the video panel; the model squashes every frame to 224 × 224 as in training, so its input is unchanged.
 
 **Before real deployment:** the thresholds are uncalibrated defaults. Set them on footage from the target cameras, keep a human in the loop to confirm alarms, and follow local privacy law (e.g. PDPA).
 
